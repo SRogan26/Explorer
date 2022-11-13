@@ -1,0 +1,23 @@
+html{
+    --c-height: 720px;
+    --c-width: 1280px;
+    /* x offset is half of the window w minus canvas w */
+    --x-off: 80px;
+}
+body{
+    margin:0;
+    background-color:darkslategrey;
+    color: whitesmoke;
+    position:relative;
+}
+#info{
+    position:absolute;
+    top: var(--c-height);
+    left:var(--x-off);
+}
+#canvas{
+    position:absolute;
+    left: var(--x-off);
+    width: var(--c-width);
+    height: var(--c-height);
+}
