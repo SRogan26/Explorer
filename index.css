@@ -18,6 +18,4 @@ body{
 #canvas{
     position:absolute;
     left: var(--x-off);
-    width: var(--c-width);
-    height: var(--c-height);
 }
