@@ -8,29 +8,51 @@ canvas.height = 720
 c.fillStyle = "black";
 c.fillRect(0, 0, 1280, 720);
 
-const practice = new Image();
-practice.src = './img/PracticeProject.png'
-const guy = new Image();
-guy.src = './img/PracticeGuy.png'
+class Sprite {
+    constructor({pos, image}){
+        this.pos = pos
+        this.image = image
+        this.vel = 16
+    }
+    draw(){
+        c.drawImage(this.image, this.pos.x, this.pos.y)
+    }
+}
 
-practice.onload = ()=>{
-    c.drawImage(practice,0,0)
-    c.drawImage(guy,16,16)
+const backgroundImg = new Image();
+backgroundImg.src = './img/PracticeProject.png'
+
+const guyImg = new Image();
+guyImg.src = './img/PracticeGuy.png'
+
+const background = new Sprite({
+    pos:{x:0, y:0},
+    image: backgroundImg
+})
+const guy = new Sprite({
+    pos:{x:16, y:16},
+    image: guyImg
+})
+
+function animate(){
+    background.draw();
+    guy.draw();
+    window.requestAnimationFrame(animate)
 }
 
 window.addEventListener('keydown', (e)=>{
     switch(e.key){
         case 'ArrowUp':
-            console.log(e.key)
+            guy.pos.y -= guy.vel
             break;
         case 'ArrowDown':
-            console.log(e.key)
+            guy.pos.y += guy.vel
             break;
         case 'ArrowLeft':
-            console.log(e.key)
+            guy.pos.x -= guy.vel
             break;
         case 'ArrowRight':
-            console.log(e.key)
+            guy.pos.x += guy.vel
             break;
         case ' ':
             console.log(e.key)
@@ -46,3 +68,5 @@ const funk = async () => {
 }
 
 funk();
+
+animate();
