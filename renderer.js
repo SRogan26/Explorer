@@ -10,43 +10,20 @@ canvas.height = 720;
 c.fillStyle = "black";
 c.fillRect(0, 0, 1280, 720);
 
-const tileSize = 24;
-
-class Sprite {
-  constructor({ pos, image }) {
-    this.pos = pos;
-    this.image = image;
-    this.vel = tileSize / 2;
-  }
-  draw() {
-    c.drawImage(this.image, this.pos.x, this.pos.y);
-  }
+function updatePosition() {
+  if (keysPressed.up) guy.pos.y -= guy.vel;
+  if (keysPressed.down) guy.pos.y += guy.vel;
+  if (keysPressed.left) guy.pos.x -= guy.vel;
+  if (keysPressed.right) guy.pos.x += guy.vel;
 }
 
-const backgroundImg = new Image();
-backgroundImg.src = "./img/PracticeProject.png";
-
-const guyImg = new Image();
-guyImg.src = "./img/PracticeGuy.png";
-const foregroundImg = new Image();
-foregroundImg.src = "./img/PracticeForeground.png";
-
-const background = new Sprite({
-  pos: { x: 0, y: 0 },
-  image: backgroundImg,
-});
-const guy = new Sprite({
-  pos: { x: tileSize * 22, y: tileSize * 15 },
-  image: guyImg,
-});
-const foreground = new Sprite({
-    pos: { x: 0, y: 0 },
-    image: foregroundImg,
-  });
-
 function animate() {
+  if(Object.entries(keysPressed).filter(key => key[1] === true).length > 0) isMoving = true
+  else isMoving = false;
+  updatePosition();
   background.draw();
   guy.draw();
+  towerPlatform.draw();
   foreground.draw();
   window.requestAnimationFrame(animate);
 }
@@ -54,16 +31,41 @@ function animate() {
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowUp":
-      guy.pos.y -= guy.vel;
+      keysPressed.up = true;
+      lastKey = 'up'
       break;
     case "ArrowDown":
-      guy.pos.y += guy.vel;
+      keysPressed.down = true;
+      lastKey = 'down'
       break;
     case "ArrowLeft":
-      guy.pos.x -= guy.vel;
+      keysPressed.left = true;
+      lastKey = 'left'
       break;
     case "ArrowRight":
-      guy.pos.x += guy.vel;
+      keysPressed.right = true;
+      lastKey = 'right'
+      break;
+    case " ":
+      console.log(e.key);
+      break;
+    default:
+      break;
+  }
+});
+window.addEventListener("keyup", (e) => {
+  switch (e.key) {
+    case "ArrowUp":
+      keysPressed.up = false;
+      break;
+    case "ArrowDown":
+      keysPressed.down = false;
+      break;
+    case "ArrowLeft":
+      keysPressed.left = false;
+      break;
+    case "ArrowRight":
+      keysPressed.right = false;
       break;
     case " ":
       console.log(e.key);
