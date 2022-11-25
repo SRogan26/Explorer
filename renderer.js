@@ -7,24 +7,94 @@ const c = canvas.getContext("2d");
 canvas.width = 1080;
 canvas.height = 720;
 
-c.fillStyle = "black";
-c.fillRect(0, 0, 1280, 720);
-
+function isColliding(rect1, rect2) {
+  // if(rect1.pos.x<0)console.log('OOB')
+  return (
+    rect1.pos.x + tileSize > rect2.pos.x &&
+    rect1.pos.x < rect2.pos.x + tileSize &&
+    rect1.pos.y + tileSize > rect2.pos.y &&
+    rect1.pos.y < rect2.pos.y + tileSize
+  );
+}
+//
 function updatePosition() {
-  if (keysPressed.up) guy.pos.y -= guy.vel;
-  if (keysPressed.down) guy.pos.y += guy.vel;
-  if (keysPressed.left) guy.pos.x -= guy.vel;
-  if (keysPressed.right) guy.pos.x += guy.vel;
+  if (keysPressed.up) {
+    for (let i = 0; i < boundaries.length; i++) {
+      const bound = boundaries[i];
+      if (
+        isColliding(
+          { ...guy, pos: { x: guy.pos.x, y: guy.pos.y - guy.vel } },
+          bound
+        )
+      ) {
+        console.log("top bump");
+        isMoving = false;
+        break;
+      }
+    }
+    if (isMoving) guy.pos.y -= guy.vel;
+  }
+  if (keysPressed.down) {
+    for (let i = 0; i < boundaries.length; i++) {
+      const bound = boundaries[i];
+      if (
+        isColliding(
+          { ...guy, pos: { x: guy.pos.x, y: guy.pos.y + guy.vel } },
+          bound
+        )
+      ) {
+        console.log("bot bump");
+        isMoving = false;
+        break;
+      }
+    }
+    if (isMoving) guy.pos.y += guy.vel;
+  }
+  if (keysPressed.left) {
+    for (let i = 0; i < boundaries.length; i++) {
+      const bound = boundaries[i];
+      if (
+        isColliding(
+          { ...guy, pos: { x: guy.pos.x - guy.vel, y: guy.pos.y } },
+          bound
+        )
+      ) {
+        console.log("left bump");
+        isMoving = false;
+        break;
+      }
+    }
+    if (isMoving) guy.pos.x -= guy.vel;
+  }
+  if (keysPressed.right) {
+    for (let i = 0; i < boundaries.length; i++) {
+      const bound = boundaries[i];
+      if (
+        isColliding(
+          { ...guy, pos: { x: guy.pos.x + guy.vel, y: guy.pos.y } },
+          bound
+        )
+      ) {
+        console.log("right bump");
+        isMoving = false;
+        break;
+      }
+    }
+    if (isMoving) guy.pos.x += guy.vel;
+  }
 }
 
 function animate() {
-  if(Object.entries(keysPressed).filter(key => key[1] === true).length > 0) isMoving = true
+  if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
+    isMoving = true;
   else isMoving = false;
+  boundaries.forEach((boundary) => isColliding(guy, boundary));
   updatePosition();
   background.draw();
   guy.draw();
   towerPlatform.draw();
   foreground.draw();
+  boundaries.forEach((boundary) => boundary.draw());
   window.requestAnimationFrame(animate);
 }
 
@@ -32,19 +102,19 @@ window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowUp":
       keysPressed.up = true;
-      lastKey = 'up'
+      lastKey = "up";
       break;
     case "ArrowDown":
       keysPressed.down = true;
-      lastKey = 'down'
+      lastKey = "down";
       break;
     case "ArrowLeft":
       keysPressed.left = true;
-      lastKey = 'left'
+      lastKey = "left";
       break;
     case "ArrowRight":
       keysPressed.right = true;
-      lastKey = 'right'
+      lastKey = "right";
       break;
     case " ":
       console.log(e.key);

@@ -1,56 +1,19 @@
-const tileSize = 24;
+//create collisions map and instantiate boundaries
+let collisionsMap = [];
 
-const keysPressed = {
-  up: false,
-  down: false,
-  left: false,
-  right: false,
-};
+for (i = 0; i < collisions.length ; i += columns) {
+  collisionsMap.push(collisions.slice(i, i + columns));
+}
+console.log(collisionsMap);
 
-console.log(collisions);
+let boundaries = [];
 
-let lastKey = "";
-let isMoving;
-
-class Sprite {
-  constructor({ pos, image, actions = null, frames = { total: 1 } }) {
-    this.pos = pos;
-    this.image = image;
-    this.actions = actions;
-    this.frames = { ...frames, current: 0, elapsed: 0 };
-    this.vel = tileSize / 8;
-  }
-  draw() {
-    if (!this.actions) c.drawImage(this.image, this.pos.x, this.pos.y);
-    else if (!lastKey) {
-      this.image.src = this.actions.init;
-      c.drawImage(this.image, this.pos.x, this.pos.y);
-    } else {
-      this.image.src = this.actions[lastKey];
-      c.drawImage(
-        this.image,
-        tileSize * this.frames.current,
-        0,
-        tileSize,
-        tileSize,
-        this.pos.x,
-        this.pos.y,
-        tileSize,
-        tileSize
-      );
-      if (!isMoving) this.frames.current = 0;
-      else {
-        this.frames.elapsed++;
-        if (this.frames.elapsed % this.frames.wait === 0) {
-          if (this.frames.current < this.frames.total - 1)
-            this.frames.current++;
-          else this.frames.current = 0;
-        }
-      }
-    }
+for(y=0; y < collisionsMap.length; y++){
+  for(x=0; x< collisionsMap[y].length; x++){
+    if(collisionsMap[y][x] !== 0) boundaries.push(new Boundary({x: x * tileSize,y: y * tileSize}))
   }
 }
-
+console.log(boundaries)
 //scene set up
 const backgroundImg = new Image();
 backgroundImg.src = "./img/scene/PracticeProject.png";
