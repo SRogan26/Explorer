@@ -19,6 +19,7 @@ function isColliding(rect1, rect2) {
 //
 function updatePosition() {
   if (keysPressed.up) {
+    let moveUp = true;
     for (let i = 0; i < boundaries.length; i++) {
       const bound = boundaries[i];
       if (
@@ -28,13 +29,14 @@ function updatePosition() {
         )
       ) {
         console.log("top bump");
-        isMoving = false;
+        moveUp = false;
         break;
       }
     }
-    if (isMoving) guy.pos.y -= guy.vel;
+    if (moveUp) guy.pos.y -= guy.vel;
   }
   if (keysPressed.down) {
+    let moveDown = true;
     for (let i = 0; i < boundaries.length; i++) {
       const bound = boundaries[i];
       if (
@@ -44,29 +46,35 @@ function updatePosition() {
         )
       ) {
         console.log("bot bump");
-        isMoving = false;
+        moveDown = false;
         break;
       }
     }
-    if (isMoving) guy.pos.y += guy.vel;
+    if (moveDown) guy.pos.y += guy.vel;
   }
   if (keysPressed.left) {
+    let moveLeft = true;
     for (let i = 0; i < boundaries.length; i++) {
       const bound = boundaries[i];
       if (
+        guy.pos.x - guy.vel < 0 ||
         isColliding(
-          { ...guy, pos: { x: guy.pos.x - guy.vel, y: guy.pos.y } },
+          {
+            ...guy,
+            pos: { x: guy.pos.x - guy.vel, y: guy.pos.y },
+          },
           bound
         )
       ) {
         console.log("left bump");
-        isMoving = false;
+        moveLeft = false;
         break;
       }
     }
-    if (isMoving) guy.pos.x -= guy.vel;
+    if (moveLeft) guy.pos.x -= guy.vel;
   }
   if (keysPressed.right) {
+    let moveRight = true;
     for (let i = 0; i < boundaries.length; i++) {
       const bound = boundaries[i];
       if (
@@ -76,11 +84,11 @@ function updatePosition() {
         )
       ) {
         console.log("right bump");
-        isMoving = false;
+        moveRight = false;
         break;
       }
     }
-    if (isMoving) guy.pos.x += guy.vel;
+    if (moveRight) guy.pos.x += guy.vel;
   }
 }
 
