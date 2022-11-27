@@ -7,6 +7,7 @@ const c = canvas.getContext("2d");
 canvas.width = 1080;
 canvas.height = 720;
 
+
 function isColliding(rect1, rect2) {
   // if(rect1.pos.x<0)console.log('OOB')
   return (
@@ -102,7 +103,18 @@ function animate() {
   guy.draw();
   towerPlatform.draw();
   foreground.draw();
-  boundaries.forEach((boundary) => boundary.draw());
+  meats.forEach(meat => meat.draw());
+  //Draws boundaries and searchable tiles
+  // boundaries.forEach((boundary) => boundary.draw());
+  // searchableTilesGrid.forEach(tile => {
+  //   c.fillStyle = "rgba(0, 255, 0, .4)";
+  //   c.fillRect(
+  //     tile[0] * tileSize,
+  //     tile[1] * tileSize,
+  //     tileSize,
+  //     tileSize
+  //   );
+  // })
   window.requestAnimationFrame(animate);
 }
 

@@ -1,19 +1,29 @@
 //create collisions map and instantiate boundaries
 let collisionsMap = [];
+let waterMap = [];
+let buildingsMap = [];
+let searchableTilesGrid = [];
 
-for (i = 0; i < collisions.length ; i += columns) {
+for (i = 0; i < water.length; i += columns) {
+  waterMap.push(water.slice(i, i + columns));
+  buildingsMap.push(buildings.slice(i, i + columns));
+}
+
+for (i = 0; i < collisions.length; i += columns) {
   collisionsMap.push(collisions.slice(i, i + columns));
 }
-console.log(collisionsMap);
 
 let boundaries = [];
 
-for(y=0; y < collisionsMap.length; y++){
-  for(x=0; x< collisionsMap[y].length; x++){
-    if(collisionsMap[y][x] !== 0) boundaries.push(new Boundary({x: x * tileSize,y: y * tileSize}))
+for (y = 0; y < collisionsMap.length; y++) {
+  for (x = 0; x < collisionsMap[y].length; x++) {
+    if (collisionsMap[y][x] !== 0)
+      boundaries.push(new Boundary({ x: x * tileSize, y: y * tileSize }));
+    else if (waterMap[y][x] + buildingsMap[y][x] === 0)
+      searchableTilesGrid.push([x, y]);
   }
 }
-console.log(boundaries)
+// console.log(searchableTilesGrid)
 //scene set up
 const backgroundImg = new Image();
 backgroundImg.src = "./img/scene/PracticeProject.png";
@@ -53,3 +63,25 @@ const guy = new Sprite({
     wait: 18,
   },
 });
+
+//meat set up
+const meatImg = new Image();
+meatImg.src = "./img/treasure/practiceMeat.png";
+
+//Grabs the coordinates of the treasure randomly
+function chooseTreasurePosition() {
+  const randIndex = Math.floor(Math.random() * searchableTilesGrid.length);
+  const option = searchableTilesGrid.splice(randIndex, 1)
+  return option[0];
+}
+const totalMeats = 5;
+let meats = [];
+for (i = 0; i < totalMeats; i++) {
+  const meatPos = chooseTreasurePosition();
+  meats.push(new Sprite({
+    pos: { x: meatPos[0] * tileSize, y: meatPos[1] * tileSize },
+    image: meatImg,
+  }))
+}
+console.log(meats);
+
