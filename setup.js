@@ -68,20 +68,15 @@ const guy = new Sprite({
 const meatImg = new Image();
 meatImg.src = "./img/treasure/practiceMeat.png";
 
+const meat = new Treasure(meatImg);
 //Grabs the coordinates of the treasure randomly
 function chooseTreasurePosition() {
   const randIndex = Math.floor(Math.random() * searchableTilesGrid.length);
   const option = searchableTilesGrid.splice(randIndex, 1)
   return option[0];
 }
-const totalMeats = 5;
-let meats = [];
+const totalMeats = 20;
 for (i = 0; i < totalMeats; i++) {
   const meatPos = chooseTreasurePosition();
-  meats.push(new Sprite({
-    pos: { x: meatPos[0] * tileSize, y: meatPos[1] * tileSize },
-    image: meatImg,
-  }))
+  meat.locations.push(meatPos)
 }
-console.log(meats);
-

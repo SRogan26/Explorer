@@ -7,6 +7,25 @@ const c = canvas.getContext("2d");
 canvas.width = 1080;
 canvas.height = 720;
 
+const scoreDiv = document.getElementById("score");
+scoreDiv.innerText = "00";
+
+const resultsText = document.getElementById("results");
+const resetBtn = document.getElementById("reset");
+
+resetBtn.addEventListener("click", () => {
+  if (wonGame) {
+    wonGame = false;
+    resultsText.style.zIndex = -1;
+    resetBtn.style.zIndex = -1;
+    for (i = 0; i < totalMeats; i++) {
+      const meatPos = chooseTreasurePosition();
+      meat.locations.push(meatPos);
+    }
+    meat.hide();
+    animate();
+  }
+});
 
 function isColliding(rect1, rect2) {
   // if(rect1.pos.x<0)console.log('OOB')
@@ -103,19 +122,12 @@ function animate() {
   guy.draw();
   towerPlatform.draw();
   foreground.draw();
-  meats.forEach(meat => meat.draw());
-  //Draws boundaries and searchable tiles
-  // boundaries.forEach((boundary) => boundary.draw());
-  // searchableTilesGrid.forEach(tile => {
-  //   c.fillStyle = "rgba(0, 255, 0, .4)";
-  //   c.fillRect(
-  //     tile[0] * tileSize,
-  //     tile[1] * tileSize,
-  //     tileSize,
-  //     tileSize
-  //   );
-  // })
-  window.requestAnimationFrame(animate);
+  meat.draw();
+  if (wonGame) {
+    resultsText.innerText = winningText;
+    resultsText.style.zIndex = 3;
+    resetBtn.style.zIndex = 4;
+  } else window.requestAnimationFrame(animate);
 }
 
 window.addEventListener("keydown", (e) => {
@@ -137,7 +149,8 @@ window.addEventListener("keydown", (e) => {
       lastKey = "right";
       break;
     case " ":
-      console.log(e.key);
+      if (isColliding(guy, meat)) meat.found();
+      else console.log("miss");
       break;
     default:
       break;
@@ -157,9 +170,9 @@ window.addEventListener("keyup", (e) => {
     case "ArrowRight":
       keysPressed.right = false;
       break;
-    case " ":
-      console.log(e.key);
-      break;
+    // case " ":
+    //   console.log(e.key);
+    //   break;
     default:
       break;
   }
@@ -171,5 +184,5 @@ const funk = async () => {
 };
 
 funk();
-
+meat.hide();
 animate();

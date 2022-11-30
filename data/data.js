@@ -11,6 +11,9 @@ const keysPressed = {
 
 let lastKey = "";
 let isMoving;
+let wonGame = false;
+
+winningText = 'YOU WON!!! CLICK TO GO AGAIN!!'
 
 const collisions = [
   400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400,

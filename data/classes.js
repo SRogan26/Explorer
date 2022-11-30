@@ -43,11 +43,31 @@ class Boundary {
   }
   draw() {
     c.fillStyle = "rgba(255, 0, 0, .4)";
-    c.fillRect(
-      this.pos.x,
-      this.pos.y,
-      tileSize,
-      tileSize
-    );
+    c.fillRect(this.pos.x, this.pos.y, tileSize, tileSize);
+  }
+}
+
+class Treasure {
+  constructor(image) {
+    this.pos = { x: 0, y: 0 };
+    this.image = image;
+    this.locations = new Array();
+  }
+  hide() {
+    //grab location option from the array
+    const theSpot = this.locations.pop();
+    this.pos = { x: theSpot[0] * tileSize, y: theSpot[1] * tileSize };
+  }
+  draw() {
+    c.drawImage(this.image, this.pos.x, this.pos.y);
+  }
+  found() {
+    //increment score
+    const scoreDiv = document.getElementById("score");
+    const currentScore = parseInt(scoreDiv.innerText);
+    scoreDiv.innerText = `0${currentScore + 1}`;
+    //hide in new spot if there is still treasure locations, else win game
+    if (this.locations.length >= 1) this.hide();
+    else wonGame = true;
   }
 }
