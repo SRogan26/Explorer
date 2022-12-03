@@ -51,7 +51,10 @@ function adjustHeat(distSQ) {
     );
     const redVal = colorMod;
     const blueVal = 255 - colorMod;
-    heatGauge.style.backgroundColor = `rgb(${redVal}, 0, ${blueVal})`;
+    let grnVal;
+    if(blueVal > redVal) grnVal = colorMod;
+    else grnVal = 255 - colorMod * .5;
+    heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ > farSQ) {
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
