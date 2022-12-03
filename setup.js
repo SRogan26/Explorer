@@ -75,7 +75,7 @@ function chooseTreasurePosition() {
   const option = searchableTilesGrid.splice(randIndex, 1)
   return option[0];
 }
-const totalMeats = 20;
+
 for (i = 0; i < totalMeats; i++) {
   const meatPos = chooseTreasurePosition();
   meat.locations.push(meatPos)

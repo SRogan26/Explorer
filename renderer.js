@@ -10,6 +10,8 @@ canvas.height = 720;
 const scoreDiv = document.getElementById("score");
 scoreDiv.innerText = "00";
 
+const heatGauge = document.getElementById("merc");
+
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
 
@@ -27,8 +29,36 @@ resetBtn.addEventListener("click", () => {
   }
 });
 
+function checkDist() {
+  //pythagorean theorem
+  const a = guy.pos.x - meat.pos.x;
+  const b = guy.pos.y - meat.pos.y;
+  const c2 = a * a + b * b;
+  return c2;
+}
+//Takes square of distance and compares to square of distance thresholds
+function adjustHeat(distSQ) {
+  const closeSQ = distThresholds.close * distThresholds.close;
+  const farSQ = distThresholds.far * distThresholds.far;
+  if (distSQ < closeSQ) {
+    heatGauge.style.backgroundColor = `rgb(255, 0, 0)`;
+    heatGauge.style.height = "100%";
+  } else if (distSQ > closeSQ && distSQ < farSQ) {
+    const distRange = farSQ - closeSQ;
+    const meterHeight = 100 * (Math.abs(distSQ - distRange) / distRange);
+    const colorMod = Math.floor(
+      255 * (Math.abs(distSQ - distRange) / distRange)
+    );
+    const redVal = colorMod;
+    const blueVal = 255 - colorMod;
+    heatGauge.style.backgroundColor = `rgb(${redVal}, 0, ${blueVal})`;
+    heatGauge.style.height = `${meterHeight}%`;
+  } else if (distSQ > farSQ) {
+    heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
+    heatGauge.style.height = "15%";
+  }
+}
 function isColliding(rect1, rect2) {
-  // if(rect1.pos.x<0)console.log('OOB')
   return (
     rect1.pos.x + tileSize > rect2.pos.x &&
     rect1.pos.x < rect2.pos.x + tileSize &&
@@ -111,18 +141,21 @@ function updatePosition() {
     if (moveRight) guy.pos.x += guy.vel;
   }
 }
-
+function drawScene() {
+  background.draw();
+  guy.draw();
+  towerPlatform.draw();
+  foreground.draw();
+  // meat.draw();
+}
 function animate() {
   if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
     isMoving = true;
   else isMoving = false;
   boundaries.forEach((boundary) => isColliding(guy, boundary));
   updatePosition();
-  background.draw();
-  guy.draw();
-  towerPlatform.draw();
-  foreground.draw();
-  meat.draw();
+  adjustHeat(checkDist());
+  drawScene();
   if (wonGame) {
     resultsText.innerText = winningText;
     resultsText.style.zIndex = 3;

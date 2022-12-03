@@ -2,6 +2,11 @@ const tileSize = 24;
 const columns = 45;
 const rows = 30;
 
+const distThresholds = {
+    close: 50,
+    far: 400
+}
+
 const keysPressed = {
     up: false,
     down: false,
@@ -12,7 +17,7 @@ const keysPressed = {
 let lastKey = "";
 let isMoving;
 let wonGame = false;
-
+const totalMeats = 5;
 winningText = 'YOU WON!!! CLICK TO GO AGAIN!!'
 
 const collisions = [

@@ -56,3 +56,17 @@ body{
     position:absolute;
     left: var(--x-off);
 }
+#therm{
+    position:absolute;
+    left: calc(1080px + 140px);
+    height: var(--c-height);
+    border: 1px solid white;
+    border-style: inset;
+    background-color: rgba(169, 169, 169, 0.302);
+    width: var(--x-off);
+}
+#merc{
+    width: 100%;
+    min-height: 15%;
+    background-color: blue;
+}
