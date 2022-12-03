@@ -57,6 +57,8 @@ const guy = new Sprite({
     down: "./img/char/guyDown.png",
     left: "./img/char/guyLeft.png",
     right: "./img/char/guyRight.png",
+    dig: "./img/char/guyDig.png",
+    found: "./img/char/guyFound.png",
   },
   frames: {
     total: 4,

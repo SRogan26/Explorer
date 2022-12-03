@@ -16,6 +16,8 @@ const keysPressed = {
 
 let lastKey = "";
 let isMoving;
+let isDigging;
+let isFinding;
 let wonGame = false;
 const totalMeats = 5;
 winningText = 'YOU WON!!! CLICK TO GO AGAIN!!'

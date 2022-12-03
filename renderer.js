@@ -40,7 +40,7 @@ function checkDist() {
 function adjustHeat(distSQ) {
   const closeSQ = distThresholds.close * distThresholds.close;
   const farSQ = distThresholds.far * distThresholds.far;
-  if (distSQ < closeSQ) {
+  if (distSQ <= closeSQ) {
     heatGauge.style.backgroundColor = `rgb(255, 0, 0)`;
     heatGauge.style.height = "100%";
   } else if (distSQ > closeSQ && distSQ < farSQ) {
@@ -56,7 +56,7 @@ function adjustHeat(distSQ) {
     else grnVal = 255 - colorMod * .5;
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
-  } else if (distSQ > farSQ) {
+  } else if (distSQ >= farSQ) {
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
     heatGauge.style.height = "15%";
   }
@@ -149,7 +149,7 @@ function drawScene() {
   guy.draw();
   towerPlatform.draw();
   foreground.draw();
-  // meat.draw();
+  meat.draw();
 }
 function animate() {
   if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
@@ -169,22 +169,29 @@ function animate() {
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowUp":
+      isDigging = false;
       keysPressed.up = true;
       lastKey = "up";
       break;
     case "ArrowDown":
+      isDigging = false;
       keysPressed.down = true;
       lastKey = "down";
       break;
     case "ArrowLeft":
+      isDigging = false;
       keysPressed.left = true;
       lastKey = "left";
       break;
     case "ArrowRight":
+      isDigging = false;
       keysPressed.right = true;
       lastKey = "right";
       break;
     case " ":
+      lastKey = "dig"
+      isDigging = true;
+      for (let key in keysPressed) keysPressed[key] = false;
       if (isColliding(guy, meat)) meat.found();
       else console.log("miss");
       break;
@@ -206,9 +213,10 @@ window.addEventListener("keyup", (e) => {
     case "ArrowRight":
       keysPressed.right = false;
       break;
-    // case " ":
-    //   console.log(e.key);
-    //   break;
+    case " ":
+      isDigging = false;
+    //   lastKey = null;
+      break;
     default:
       break;
   }

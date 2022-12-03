@@ -24,13 +24,15 @@ class Sprite {
         tileSize,
         tileSize
       );
-      if (!isMoving) this.frames.current = 0;
+      if (!isMoving && !isDigging && !isFinding) this.frames.current = 0;
       else {
         this.frames.elapsed++;
         if (this.frames.elapsed % this.frames.wait === 0) {
           if (this.frames.current < this.frames.total - 1)
             this.frames.current++;
-          else this.frames.current = 0;
+          else if (!isFinding) this.frames.current = 0;
+          else if (this.frames.elapsed % (this.frames.wait * 10) === 0)
+            isFinding = false;
         }
       }
     }
@@ -59,13 +61,18 @@ class Treasure {
     this.pos = { x: theSpot[0] * tileSize, y: theSpot[1] * tileSize };
   }
   draw() {
-    c.drawImage(this.image, this.pos.x, this.pos.y);
+    if (isFinding) {
+      const guyCopy = { ...guy };
+      c.drawImage(this.image, guyCopy.pos.x, guyCopy.pos.y - tileSize);
+    }
   }
   found() {
     //increment score
     const scoreDiv = document.getElementById("score");
     const currentScore = parseInt(scoreDiv.innerText);
     scoreDiv.innerText = `0${currentScore + 1}`;
+    isFinding = true;
+    lastKey = "found";
     //hide in new spot if there is still treasure locations, else win game
     if (this.locations.length >= 1) this.hide();
     else wonGame = true;
