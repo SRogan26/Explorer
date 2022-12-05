@@ -1,6 +1,10 @@
 const tileSize = 24;
 const columns = 45;
 const rows = 30;
+let frameRate = 1 / 60;
+const roundDuration = 5 * 1000;
+let timeLeftms;
+let animID;
 
 const distThresholds = {
     close: 50,
@@ -19,8 +23,10 @@ let isMoving;
 let isDigging;
 let isFinding;
 let wonGame = false;
+let lostGame = false;
 const totalMeats = 5;
-winningText = 'YOU WON!!! CLICK TO GO AGAIN!!'
+const winningText = 'YOU WON!!! CLICK TO GO AGAIN!!'
+const losingText = 'YOU LOST!!! CLICK TO GO AGAIN!!'
 
 const collisions = [
   400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400,

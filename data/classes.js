@@ -4,7 +4,8 @@ class Sprite {
     this.image = image;
     this.actions = actions;
     this.frames = { ...frames, current: 0, elapsed: 0 };
-    this.vel = tileSize / 8;
+    //multiplier sets how many tiles you move per second
+    this.vel = Math.floor(10 * tileSize * frameRate);
   }
   draw() {
     if (!this.actions) c.drawImage(this.image, this.pos.x, this.pos.y);
@@ -30,8 +31,8 @@ class Sprite {
         if (this.frames.elapsed % this.frames.wait === 0) {
           if (this.frames.current < this.frames.total - 1)
             this.frames.current++;
-          else if (!isFinding) this.frames.current = 0;
-          else if (this.frames.elapsed % (this.frames.wait * 10) === 0)
+          else this.frames.current = 0;
+          if (this.frames.elapsed % (this.frames.wait * 12) === 0)
             isFinding = false;
         }
       }

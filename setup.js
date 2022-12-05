@@ -62,7 +62,7 @@ const guy = new Sprite({
   },
   frames: {
     total: 4,
-    wait: 18,
+    wait: 12,
   },
 });
 

@@ -3,6 +3,9 @@ document.getElementById(
 ).innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
 const canvas = document.getElementById("canvas");
 const c = canvas.getContext("2d");
+let lastTime;
+let frameAccumulator = 0;
+let startTime;
 
 canvas.width = 1080;
 canvas.height = 720;
@@ -16,6 +19,12 @@ const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
 
 resetBtn.addEventListener("click", () => {
+  if (lostGame) {
+    lostGame = false;
+    resultsText.style.zIndex = -1;
+    resetBtn.style.zIndex = -1;
+    animate();
+  }
   if (wonGame) {
     wonGame = false;
     resultsText.style.zIndex = -1;
@@ -52,8 +61,8 @@ function adjustHeat(distSQ) {
     const redVal = colorMod;
     const blueVal = 255 - colorMod;
     let grnVal;
-    if(blueVal > redVal) grnVal = colorMod;
-    else grnVal = 255 - colorMod * .5;
+    if (blueVal > redVal) grnVal = colorMod;
+    else grnVal = 255 - colorMod * 0.5;
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ >= farSQ) {
@@ -151,19 +160,54 @@ function drawScene() {
   foreground.draw();
   meat.draw();
 }
-function animate() {
+function animate(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  if (!startTime) startTime = timestamp;
+  //in game timer value
+  timeLeftms = roundDuration - (performance.now() - startTime);
+  const clockMins = Math.floor(timeLeftms / (1000 * 60));
+  const clockSecs =
+    Math.floor((timeLeftms / 1000) % 60) < 10
+      ? `0${Math.floor((timeLeftms / 1000) % 60)}`
+      : Math.floor((timeLeftms / 1000) % 60);
+  let clockMs = Math.ceil(Math.floor(timeLeftms % 1000) / 100);
+  if (clockMs === 10) clockMs = 0;
+  // else if(clockMs < 100)clockMs = `0${clockMs}`
+  document.getElementById(
+    "timer"
+  ).innerText = `${clockMins}:${clockSecs}.${clockMs}`;
   if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
     isMoving = true;
   else isMoving = false;
-  boundaries.forEach((boundary) => isColliding(guy, boundary));
-  updatePosition();
-  adjustHeat(checkDist());
-  drawScene();
-  if (wonGame) {
+  //frame rate limiter loop, should help keep game clock at 60 calcs per sec
+  if (lastTime) {
+    frameAccumulator += (performance.now() - lastTime) / 1000;
+    // console.log(frameAccumulator)
+    while (frameAccumulator > frameRate) {
+      boundaries.forEach((boundary) => isColliding(guy, boundary));
+      updatePosition();
+      adjustHeat(checkDist());
+      frameAccumulator -= frameRate;
+      drawScene();
+    }
+  }
+  if (timeLeftms <= 0 && startTime) {
+    cancelAnimationFrame(animID);
+    lostGame = true;
+    startTime = null;
+    // timeLeftms = roundDuration - (performance.now() - startTime);
+    resultsText.innerText = losingText;
+    resultsText.style.zIndex = 3;
+    resetBtn.style.zIndex = 4;
+  } else if (wonGame) {
+    cancelAnimationFrame(animID);
     resultsText.innerText = winningText;
     resultsText.style.zIndex = 3;
     resetBtn.style.zIndex = 4;
-  } else window.requestAnimationFrame(animate);
+  } else {
+    lastTime = timestamp;
+    animID = window.requestAnimationFrame(animate);
+  }
 }
 
 window.addEventListener("keydown", (e) => {
@@ -189,7 +233,7 @@ window.addEventListener("keydown", (e) => {
       lastKey = "right";
       break;
     case " ":
-      lastKey = "dig"
+      lastKey = "dig";
       isDigging = true;
       for (let key in keysPressed) keysPressed[key] = false;
       if (isColliding(guy, meat)) meat.found();
@@ -215,7 +259,7 @@ window.addEventListener("keyup", (e) => {
       break;
     case " ":
       isDigging = false;
-    //   lastKey = null;
+      //   lastKey = null;
       break;
     default:
       break;
