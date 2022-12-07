@@ -5,15 +5,14 @@ class Sprite {
     this.actions = actions;
     this.frames = { ...frames, current: 0, elapsed: 0 };
     //multiplier sets how many tiles you move per second
-    this.vel = Math.floor(10 * tileSize * frameRate);
+    this.vel = tilesPerSec * tileSize * frameRate;
   }
   draw() {
-    if (!this.actions) c.drawImage(this.image, this.pos.x, this.pos.y);
-    else if (!lastKey) {
+    if (!lastAct) {
       this.image.src = this.actions.init;
       c.drawImage(this.image, this.pos.x, this.pos.y);
     } else {
-      this.image.src = this.actions[lastKey];
+      this.image.src = this.actions[lastAct];
       c.drawImage(
         this.image,
         tileSize * this.frames.current,
@@ -39,7 +38,15 @@ class Sprite {
     }
   }
 }
-
+class Scene {
+  constructor({pos, image}){
+    this.pos = pos;
+    this.image = image;
+  }
+  draw(){
+    c.drawImage(this.image, this.pos.x, this.pos.y);
+  }
+}
 class Boundary {
   constructor(pos) {
     this.pos = pos;
@@ -71,9 +78,9 @@ class Treasure {
     //increment score
     const scoreDiv = document.getElementById("score");
     const currentScore = parseInt(scoreDiv.innerText);
-    scoreDiv.innerText = `0${currentScore + 1}`;
+    scoreDiv.innerText = currentScore < 9 ? `0${currentScore + 1}` : `${currentScore + 1}`;
     isFinding = true;
-    lastKey = "found";
+    lastAct = "found";
     //hide in new spot if there is still treasure locations, else win game
     if (this.locations.length >= 1) this.hide();
     else wonGame = true;
