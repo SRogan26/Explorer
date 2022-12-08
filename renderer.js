@@ -7,8 +7,8 @@ let lastTime;
 let frameAccumulator = 0;
 let startTime;
 
-canvas.width = 1080;
-canvas.height = 720;
+canvas.width = columns * tileSize;
+canvas.height = rows * tileSize;
 
 const scoreDiv = document.getElementById("score");
 scoreDiv.innerText = "00";
@@ -199,7 +199,7 @@ function animate(timestamp) {
     isMoving = true;
   else isMoving = false;
   //frame rate limiter loop, should help keep game Tick rate at 60 calcs per sec
-  if (lastTime) logicTick(performance.now(), lastTime);
+  if (lastTime) logicTick(performance.now(), lastTime); 
   if (timeLeftms <= 0 && startTime) showLoseScreen();
   else if (wonGame) showWinScreen();
   else {
@@ -214,6 +214,7 @@ function gameStart() {
   meat.hide();
   animate();
 }
+//example of ipc
 const funk = async () => {
   const res = await window.versions.ping();
   console.log(res);

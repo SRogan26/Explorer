@@ -81,6 +81,7 @@ class Treasure {
     scoreDiv.innerText = currentScore < 9 ? `0${currentScore + 1}` : `${currentScore + 1}`;
     isFinding = true;
     lastAct = "found";
+    guy.frames.elapsed = 0;
     //hide in new spot if there is still treasure locations, else win game
     if (this.locations.length >= 1) this.hide();
     else wonGame = true;
