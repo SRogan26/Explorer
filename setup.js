@@ -25,32 +25,32 @@ for (y = 0; y < collisionsMap.length; y++) {
 }
 
 //scene set up
-const backgroundImg = new Image();
-backgroundImg.src = "./img/scene/PracticeProject.png";
-const towerPlatImg = new Image();
-towerPlatImg.src = "./img/scene/towerPlat.png";
-const foregroundImg = new Image();
-foregroundImg.src = "./img/scene/PracticeForeground.png";
+function createSceneObj(src) {
+  const imgObj = new Image();
+  imgObj.src = src;
+  return new Scene({
+    pos: { x: 0, y: 0 },
+    image: imgObj,
+  });
+}
 
-const background = new Scene({
-  pos: { x: 0, y: 0 },
-  image: backgroundImg,
-});
-const towerPlatform = new Scene({
-  pos: { x: 0, y: 0 },
-  image: towerPlatImg,
-});
-const foreground = new Scene({
-  pos: { x: 0, y: 0 },
-  image: foregroundImg,
-});
+const background = createSceneObj("./img/scene/PracticeProject.png");
+const towerPlatform = createSceneObj("./img/scene/towerPlat.png");
+const foreground = createSceneObj("./img/scene/PracticeForeground.png");
 
 //character set up
-const guyImg = new Image();
-const guyPos = chooseRandomPosition([...searchableTilesGrid]);
-const guy = new Sprite({
-  pos: { x: tileSize * guyPos[0], y: tileSize * guyPos[1] },
-  image: guyImg,
+function createCharacterObj(character){
+  const charImg = new Image();
+  const charPos = chooseRandomPosition([...searchableTilesGrid]);
+  return new Sprite({
+    pos: { x: tileSize * charPos[0], y: tileSize * charPos[1] },
+    image: charImg,
+    actions: character.actions,
+    frames: character.frames,
+  });
+}
+
+const guyData = {
   actions: {
     init: "./img/char/PracticeGuy.png",
     up: "./img/char/guyUp.png",
@@ -62,9 +62,10 @@ const guy = new Sprite({
   },
   frames: {
     total: 4,
-    wait: Math.round((1/frameRate)/5),
+    wait: Math.round(1 / frameRate / 4),
   },
-});
+}
+const guy = createCharacterObj(guyData);
 
 //meat set up
 const meatImg = new Image();
@@ -78,11 +79,14 @@ function chooseRandomPosition(copyOfSearchables) {
   return option[0];
 }
 function shuffleTreasurePositions() {
-  const copyOfSearchables = [...searchableTilesGrid]
+  const copyOfSearchables = [...searchableTilesGrid];
   while (copyOfSearchables.length > 0) {
     const meatPos = chooseRandomPosition(copyOfSearchables);
     meat.locations.push(meatPos);
   }
-  console.log('All locations set: ', meat.locations.length === searchableTilesGrid.length)
+  console.log(
+    "All locations set: ",
+    meat.locations.length === searchableTilesGrid.length
+  );
 }
 shuffleTreasurePositions();

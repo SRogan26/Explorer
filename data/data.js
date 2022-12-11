@@ -1,17 +1,13 @@
+//Global
+let timeLeftms;
+let animID;
 const tileSize = 24;
 const columns = 45;
 const rows = 30;
-let frameRate = 1 / 240;
-const tilesPerSec = 10;
-const roundDuration = 60 * 1000;
-let timeLeftms;
-let animID;
-
-const distThresholds = {
-  close: 50,
-  far: 400,
-};
-
+let lastAct = "";
+let isMoving;
+let isDigging;
+let isFinding;
 const keysPressed = {
   up: false,
   down: false,
@@ -19,17 +15,24 @@ const keysPressed = {
   right: false,
 };
 
-let lastAct = "";
-let isMoving;
-let isDigging;
-let isFinding;
-let gameStarted = false;
-let wonGame = false;
-let lostGame = false;
 const totalMeats = 5;
+//Game static
+let frameRate = 1 / 240;
+const tilesPerSec = 10;
+const roundDuration = 60 * 1000;
+const distThresholds = {
+  close: 50,
+  far: 400,
+};
 const winningText = "YOU WON!!! CLICK TO GO AGAIN!!";
 const losingText = "YOU LOST!!! CLICK TO GO AGAIN!!";
 
+//Game instance
+let gameStarted = false;
+let wonGame = false;
+let lostGame = false;
+
+//Map data
 const collisions = [
   400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400,
   400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400,

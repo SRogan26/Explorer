@@ -1,3 +1,23 @@
+//Game NOT IMPLEMENTED YET
+class Game {
+  static tickRate = 1 / 240;
+  static tilesPerSec = 10;
+  static roundDuration = 60 * 1000;
+  static distThresholds = {
+    close: 50,
+    far: 400,
+  };
+  static winningText = "YOU WON!!! CLICK BELOW TO GO AGAIN!!";
+  static losingText = "TIMES UP!!! CLICK BELOW TO GO AGAIN!!";
+  constructor({}) {
+    //independent instance properties
+    this.started = false;
+    this.won = false;
+    this.lost = false;
+    //dependent properties
+  }
+
+}
 class Sprite {
   constructor({ pos, image, actions = null, frames = { total: 1 } }) {
     this.pos = pos;
@@ -39,11 +59,11 @@ class Sprite {
   }
 }
 class Scene {
-  constructor({pos, image}){
+  constructor({ pos, image }) {
     this.pos = pos;
     this.image = image;
   }
-  draw(){
+  draw() {
     c.drawImage(this.image, this.pos.x, this.pos.y);
   }
 }
@@ -78,7 +98,8 @@ class Treasure {
     //increment score
     const scoreDiv = document.getElementById("score");
     const currentScore = parseInt(scoreDiv.innerText);
-    scoreDiv.innerText = currentScore < 9 ? `0${currentScore + 1}` : `${currentScore + 1}`;
+    scoreDiv.innerText =
+      currentScore < 9 ? `0${currentScore + 1}` : `${currentScore + 1}`;
     isFinding = true;
     lastAct = "found";
     guy.frames.elapsed = 0;
