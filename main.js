@@ -7,7 +7,8 @@ const createWindow = () => {
         height: 900,
         webPreferences: {
             preload: path.join(__dirname,'preload.js')
-        }
+        },
+        resizable: false,
     })
     ipcMain.handle('ping', ()=>'pong')
     win.loadFile('index.html')
