@@ -78,10 +78,11 @@ class Boundary {
 }
 
 class Treasure {
-  constructor(image) {
+  constructor(image, findSfx) {
     this.pos = { x: 0, y: 0 };
     this.image = image;
     this.locations = new Array();
+    this.findSfx = findSfx
   }
   hide() {
     //grab location option from the array
@@ -95,6 +96,7 @@ class Treasure {
     }
   }
   found() {
+    this.findSfx.play();
     //increment score
     const scoreDiv = document.getElementById("score");
     const currentScore = parseInt(scoreDiv.innerText);

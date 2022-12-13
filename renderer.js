@@ -15,7 +15,7 @@ scoreDiv.innerText = "00";
 
 const heatGauge = document.getElementById("merc");
 
-const startScreen = document.getElementById("start-screen")
+const startScreen = document.getElementById("start-screen");
 
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
@@ -33,11 +33,13 @@ function adjustHeat(distSQ) {
   const closeSQ = distThresholds.close * distThresholds.close;
   const farSQ = distThresholds.far * distThresholds.far;
   if (distSQ <= closeSQ) {
+    music.volume = 1;
     heatGauge.style.backgroundColor = `rgb(255, 0, 0)`;
     heatGauge.style.height = "100%";
   } else if (distSQ > closeSQ && distSQ < farSQ) {
     const distRange = farSQ - closeSQ;
     const meterHeight = 100 * (Math.abs(distSQ - distRange) / distRange);
+    music.volume = 0.15 + meterHeight *.85 / 100;
     const colorMod = Math.floor(
       255 * (Math.abs(distSQ - distRange) / distRange)
     );
@@ -49,6 +51,7 @@ function adjustHeat(distSQ) {
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ >= farSQ) {
+    music.volume = 0.15;
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
     heatGauge.style.height = "15%";
   }
@@ -74,7 +77,7 @@ function updatePosition() {
           bound
         )
       ) {
-        console.log("top bump");
+        bumpSfx.play();
         moveUp = false;
         break;
       }
@@ -91,7 +94,7 @@ function updatePosition() {
           bound
         )
       ) {
-        console.log("bot bump");
+        bumpSfx.play();
         moveDown = false;
         break;
       }
@@ -112,7 +115,7 @@ function updatePosition() {
           bound
         )
       ) {
-        console.log("left bump");
+        bumpSfx.play();
         moveLeft = false;
         break;
       }
@@ -129,7 +132,7 @@ function updatePosition() {
           bound
         )
       ) {
-        console.log("right bump");
+        bumpSfx.play();
         moveRight = false;
         break;
       }
@@ -175,6 +178,8 @@ function logicTick(current, previous) {
 //Results Screens Triggers
 function showLoseScreen() {
   cancelAnimationFrame(animID);
+  music.pause();
+  gameOver.play();
   lostGame = true;
   startTime = null;
   // timeLeftms = roundDuration - (performance.now() - startTime);
@@ -191,15 +196,17 @@ function showWinScreen() {
 }
 //game loop
 function animate(timestamp) {
+  if (music.ended) music.play();
   if (!lastTime) lastTime = timestamp;
   if (!startTime) startTime = timestamp;
+  // console.log(music.volume)
   //in game timer value
   setTimerValue(performance.now(), startTime);
   if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
     isMoving = true;
   else isMoving = false;
   //frame rate limiter loop, should help keep game Tick rate at 60 calcs per sec
-  if (lastTime) logicTick(performance.now(), lastTime); 
+  if (lastTime) logicTick(performance.now(), lastTime);
   if (timeLeftms <= 0 && startTime) showLoseScreen();
   else if (wonGame) showWinScreen();
   else {
@@ -210,7 +217,8 @@ function animate(timestamp) {
 //game starter
 function gameStart() {
   gameStarted = true;
-  startScreen.style.display = 'none'
+  music.play();
+  startScreen.style.display = "none";
   meat.hide();
   animate();
 }
@@ -295,6 +303,8 @@ resetBtn.addEventListener("click", () => {
   }
   shuffleTreasurePositions();
   meat.hide();
+  music.currentTime = 0;
+  music.play();
   animate();
 });
 

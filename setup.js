@@ -23,6 +23,12 @@ for (y = 0; y < collisionsMap.length; y++) {
       searchableTilesGrid.push([x, y]);
   }
 }
+//audio?
+const music = new Audio('audio/music/StrongandStrike.mp3')
+const findSfx = new Audio('audio/fx/Gold1.wav')
+const bumpSfx = new Audio('./audio/fx/Hit.wav')
+bumpSfx.volume = .45;
+const gameOver = new Audio('./audio/music/GameOver2.wav')
 
 //scene set up
 function createSceneObj(src) {
@@ -71,7 +77,8 @@ const guy = createCharacterObj(guyData);
 const meatImg = new Image();
 meatImg.src = "./img/treasure/practiceMeat.png";
 
-const meat = new Treasure(meatImg);
+
+const meat = new Treasure(meatImg, findSfx);
 //Grabs the coordinates of the treasure randomly
 function chooseRandomPosition(copyOfSearchables) {
   const randIndex = Math.floor(Math.random() * copyOfSearchables.length);
