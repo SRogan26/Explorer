@@ -19,7 +19,7 @@ const totalMeats = 5;
 //Game static
 let frameRate = 1 / 240;
 const tilesPerSec = 10;
-const roundDuration = 60 * 1000;
+const roundDuration = 2 * 1000;
 const distThresholds = {
   close: 50,
   far: 400,

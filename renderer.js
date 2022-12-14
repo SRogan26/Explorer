@@ -15,7 +15,7 @@ scoreDiv.innerText = "00";
 
 const heatGauge = document.getElementById("merc");
 
-const startScreen = document.getElementById("start-screen");
+const startScreen = document.getElementById("start");
 
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
@@ -39,7 +39,7 @@ function adjustHeat(distSQ) {
   } else if (distSQ > closeSQ && distSQ < farSQ) {
     const distRange = farSQ - closeSQ;
     const meterHeight = 100 * (Math.abs(distSQ - distRange) / distRange);
-    music.volume = 0.15 + meterHeight *.85 / 100;
+    music.volume = 0.3 + (meterHeight * 0.7) / 100;
     const colorMod = Math.floor(
       255 * (Math.abs(distSQ - distRange) / distRange)
     );
@@ -51,7 +51,7 @@ function adjustHeat(distSQ) {
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ >= farSQ) {
-    music.volume = 0.15;
+    music.volume = 0.3;
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
     heatGauge.style.height = "15%";
   }
@@ -217,6 +217,7 @@ function animate(timestamp) {
 //game starter
 function gameStart() {
   gameStarted = true;
+  titleMusic.pause();
   music.play();
   startScreen.style.display = "none";
   meat.hide();
@@ -228,6 +229,16 @@ const funk = async () => {
   console.log(res);
 };
 //EVENT LISTENERS
+//Title Screen
+titleMusic.addEventListener("canplay", () => {
+  if (!gameStarted) titleMusic.play();
+});
+titleMusic.addEventListener("ended", () => {
+  if (!gameStarted) {
+    titleMusic.currentTime = 0;
+    titleMusic.play();
+  }
+});
 //Key Press Listneners
 window.addEventListener("keydown", (e) => {
   switch (e.key) {

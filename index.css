@@ -36,30 +36,27 @@ body{
     top: var(--c-height);
     left:var(--x-off);
 }
-#start-screen{
+.screen{
     position: absolute;
     left: var(--x-off);
     width: var(--c-width);
     height: var(--c-height);
     font-size: 10rem;
     text-align: center;
+}
+#start{
     background-color: rgb(15, 6, 117);
 }
 #results{
-    position: absolute;
-    left: var(--x-off);
-    width: var(--c-width);
-    height: var(--c-height);
-    font-size: 10rem;
-    text-align: center;
     background-color: black;
 }
 #reset{
     position: absolute;
-    left: 35%;
-    top: calc(720px - 6rem);
+    left: calc(var(--c-width)/2);
+    top: calc(var(--c-height) - 8rem);
     font-size: 6rem;
     color: green;
+    border: 2px solid green;
 }
 #canvas{
     position:absolute;
@@ -67,7 +64,7 @@ body{
 }
 #therm{
     position:absolute;
-    left: calc(1080px + 140px);
+    left: calc(var(--c-width) + var(--x-off));
     height: var(--c-height);
     border: 1px solid white;
     border-style: inset;

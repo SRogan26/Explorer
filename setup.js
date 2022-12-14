@@ -24,6 +24,8 @@ for (y = 0; y < collisionsMap.length; y++) {
   }
 }
 //audio?
+const titleMusic = new Audio('audio/music/GoodTime.ogg')
+titleMusic.volume = .7;
 const music = new Audio('audio/music/StrongandStrike.mp3')
 const findSfx = new Audio('audio/fx/Gold1.wav')
 const bumpSfx = new Audio('./audio/fx/Hit.wav')
