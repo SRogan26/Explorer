@@ -4,7 +4,8 @@ document.getElementById(
 const canvas = document.getElementById("canvas");
 const c = canvas.getContext("2d");
 let lastTime;
-let frameAccumulator = 0;
+let tickAccumulator = 0;
+let frameAcc = 0;
 let startTime;
 
 canvas.width = columns * tileSize;
@@ -33,13 +34,13 @@ function adjustHeat(distSQ) {
   const closeSQ = distThresholds.close * distThresholds.close;
   const farSQ = distThresholds.far * distThresholds.far;
   if (distSQ <= closeSQ) {
-    music.volume = 1;
+    music.volume = musicVolume.max;
     heatGauge.style.backgroundColor = `rgb(255, 0, 0)`;
     heatGauge.style.height = "100%";
   } else if (distSQ > closeSQ && distSQ < farSQ) {
     const distRange = farSQ - closeSQ;
     const meterHeight = 100 * (Math.abs(distSQ - distRange) / distRange);
-    music.volume = 0.3 + (meterHeight * 0.7) / 100;
+    music.volume = 0.24 + (meterHeight * volRange) / 100;
     const colorMod = Math.floor(
       255 * (Math.abs(distSQ - distRange) / distRange)
     );
@@ -51,7 +52,7 @@ function adjustHeat(distSQ) {
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ >= farSQ) {
-    music.volume = 0.3;
+    music.volume = musicVolume.min;
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
     heatGauge.style.height = "15%";
   }
@@ -140,12 +141,17 @@ function updatePosition() {
     if (moveRight) guy.pos.x += guy.vel;
   }
 }
-function drawScene() {
-  background.draw();
-  guy.draw();
-  towerPlatform.draw();
-  foreground.draw();
-  meat.draw();
+function drawScene(current, previous) {
+  frameAcc += (current - previous) / 1000;
+  while (frameAcc > frameRate) {
+    background.draw();
+    guy.draw();
+    towerPlatform.draw();
+    foreground.draw();
+    meat.draw();
+    adjustHeat(checkDist());
+    frameAcc -= frameRate;
+  }
 }
 //countdown timer value
 function setTimerValue(current, start) {
@@ -165,14 +171,12 @@ function setTimerValue(current, start) {
 }
 //calculation rate setter
 function logicTick(current, previous) {
-  frameAccumulator += (current - previous) / 1000;
+  tickAccumulator += (current - previous) / 1000;
   // console.log(frameAccumulator)
-  while (frameAccumulator > frameRate) {
+  while (tickAccumulator > tickRate) {
     boundaries.forEach((boundary) => isColliding(guy, boundary));
     updatePosition();
-    adjustHeat(checkDist());
-    frameAccumulator -= frameRate;
-    drawScene();
+    tickAccumulator -= tickRate;
   }
 }
 //Results Screens Triggers
@@ -207,6 +211,7 @@ function animate(timestamp) {
   else isMoving = false;
   //frame rate limiter loop, should help keep game Tick rate at 60 calcs per sec
   if (lastTime) logicTick(performance.now(), lastTime);
+  if (lastTime) drawScene(performance.now(), lastTime);
   if (timeLeftms <= 0 && startTime) showLoseScreen();
   else if (wonGame) showWinScreen();
   else {
@@ -222,6 +227,14 @@ function gameStart() {
   startScreen.style.display = "none";
   meat.hide();
   animate();
+}
+//function to control digging action
+function dig() {
+  lastAct = "dig";
+  isDigging = true;
+  for (let key in keysPressed) keysPressed[key] = false;
+  if (isColliding(guy, meat)) meat.found();
+  else missSfx.play();
 }
 //example of ipc
 const funk = async () => {
@@ -264,13 +277,7 @@ window.addEventListener("keydown", (e) => {
       break;
     case " ":
       if (!gameStarted) gameStart();
-      else {
-        lastAct = "dig";
-        isDigging = true;
-        for (let key in keysPressed) keysPressed[key] = false;
-        if (isColliding(guy, meat)) meat.found();
-        else console.log("miss");
-      }
+      else dig();
       break;
     default:
       break;
@@ -292,7 +299,6 @@ window.addEventListener("keyup", (e) => {
       break;
     case " ":
       isDigging = false;
-      //   lastAct = null;
       break;
     default:
       break;

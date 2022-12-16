@@ -14,12 +14,20 @@ const keysPressed = {
   left: false,
   right: false,
 };
-
+const musicVolume = {
+  min: 0.24,
+  max: 0.8,
+};
+const volRange = musicVolume.max - musicVolume.min;
 const totalMeats = 5;
 //Game static
-let frameRate = 1 / 240;
+//nTick increases logical tickRate, DO NOT SET THIS HIGHER THAN 5
+const nTick = 2;
+const tickRate = (1 / 60) * Math.pow(1 / 2, nTick);
+//frame draw rate
+const frameRate = 1 / 120;
 const tilesPerSec = 10;
-const roundDuration = 2 * 1000;
+const roundDuration = 60 * 1000;
 const distThresholds = {
   close: 50,
   far: 400,

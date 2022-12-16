@@ -1,31 +1,16 @@
-//Game NOT IMPLEMENTED YET
-class Game {
-  static tickRate = 1 / 240;
-  static tilesPerSec = 10;
-  static roundDuration = 60 * 1000;
-  static distThresholds = {
-    close: 50,
-    far: 400,
-  };
-  static winningText = "YOU WON!!! CLICK BELOW TO GO AGAIN!!";
-  static losingText = "TIMES UP!!! CLICK BELOW TO GO AGAIN!!";
-  constructor({}) {
-    //independent instance properties
-    this.started = false;
-    this.won = false;
-    this.lost = false;
-    //dependent properties
-  }
-
-}
 class Sprite {
   constructor({ pos, image, actions = null, frames = { total: 1 } }) {
     this.pos = pos;
     this.image = image;
     this.actions = actions;
-    this.frames = { ...frames, current: 0, elapsed: 0 };
+    this.frames = {
+      ...frames,
+      wait: Math.round(frames.wait / frameRate),
+      current: 0,
+      elapsed: 0,
+    };
     //multiplier sets how many tiles you move per second
-    this.vel = tilesPerSec * tileSize * frameRate;
+    this.vel = tilesPerSec * tileSize * tickRate;
   }
   draw() {
     if (!lastAct) {
@@ -82,7 +67,7 @@ class Treasure {
     this.pos = { x: 0, y: 0 };
     this.image = image;
     this.locations = new Array();
-    this.findSfx = findSfx
+    this.findSfx = findSfx;
   }
   hide() {
     //grab location option from the array
