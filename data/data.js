@@ -27,7 +27,7 @@ const tickRate = (1 / 60) * Math.pow(1 / 2, nTick);
 //frame draw rate
 const frameRate = 1 / 120;
 const tilesPerSec = 10;
-const roundDuration = 6 * 1000;
+const roundDuration = 60 * 1000;
 const distThresholds = {
   close: 50,
   far: 400,
