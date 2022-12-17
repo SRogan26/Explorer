@@ -7,6 +7,14 @@ let lastTime;
 let tickAccumulator = 0;
 let frameAcc = 0;
 let startTime;
+//Reference for character
+let guy;
+const screens = {
+  char:0,
+  start: 1,
+  game: 2,
+  end: 3,
+}
 
 canvas.width = columns * tileSize;
 canvas.height = rows * tileSize;
@@ -16,10 +24,14 @@ scoreDiv.innerText = "00";
 
 const heatGauge = document.getElementById("merc");
 
+const charSelScreen = document.getElementById("charselect");
+const charList = charSelScreen.getElementsByTagName("ul")[0].children;
 const startScreen = document.getElementById("start");
+const endScreen = document.getElementById("end");
 
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
+const changeBtn = document.getElementById("toCharSelect");
 
 //checks distance between meat and player
 function checkDist() {
@@ -169,14 +181,46 @@ function setTimerValue(current, start) {
     "timer"
   ).innerText = `${clockMins}:${clockSecs}.${clockMs}`;
 }
+function setMusicIntensity() {
+  if (timeLeftms <= 10000) music.playbackRate = 1.2;
+  else music.playbackRate = 1;
+}
 //calculation rate setter
 function logicTick(current, previous) {
   tickAccumulator += (current - previous) / 1000;
-  // console.log(frameAccumulator)
   while (tickAccumulator > tickRate) {
     boundaries.forEach((boundary) => isColliding(guy, boundary));
     updatePosition();
     tickAccumulator -= tickRate;
+  }
+}
+//Foreground Screen Setter
+function setActiveScreen(screen) {
+  switch (screen) {
+    case screens.char:
+      charSelScreen.style.zIndex = 3;
+      startScreen.style.zIndex = -1;
+      canvas.style.zIndex = -1;
+      endScreen.style.zIndex = -1;
+      break;
+    case screens.start:
+      startScreen.style.zIndex = 3;
+      canvas.style.zIndex = -1;
+      charSelScreen.style.zIndex = -1;
+      endScreen.style.zIndex = -1;
+      break;
+    case screens.game:
+      canvas.style.zIndex = 3; 
+      startScreen.style.zIndex = -1;
+      charSelScreen.style.zIndex = -1;
+      endScreen.style.zIndex = -1;
+      break;
+    case screens.end:
+      endScreen.style.zIndex = 3;
+      startScreen.style.zIndex = -1;
+      canvas.style.zIndex = -1;
+      charSelScreen.style.zIndex = -1;
+      break;
   }
 }
 //Results Screens Triggers
@@ -186,17 +230,14 @@ function showLoseScreen() {
   gameOver.play();
   lostGame = true;
   startTime = null;
-  // timeLeftms = roundDuration - (performance.now() - startTime);
   resultsText.innerText = losingText;
-  resultsText.style.zIndex = 3;
-  resetBtn.style.zIndex = 4;
+  setActiveScreen(screens.end);
 }
 function showWinScreen() {
   cancelAnimationFrame(animID);
   startTime = null;
   resultsText.innerText = winningText;
-  resultsText.style.zIndex = 3;
-  resetBtn.style.zIndex = 4;
+  setActiveScreen(screens.end);
 }
 //game loop
 function animate(timestamp) {
@@ -206,6 +247,8 @@ function animate(timestamp) {
   // console.log(music.volume)
   //in game timer value
   setTimerValue(performance.now(), startTime);
+  setMusicIntensity();
+  //check to see if any movement keys are pressed
   if (Object.entries(keysPressed).filter((key) => key[1] === true).length > 0)
     isMoving = true;
   else isMoving = false;
@@ -224,7 +267,7 @@ function gameStart() {
   gameStarted = true;
   titleMusic.pause();
   music.play();
-  startScreen.style.display = "none";
+  setActiveScreen(screens.game);
   meat.hide();
   animate();
 }
@@ -234,7 +277,7 @@ function dig() {
   isDigging = true;
   for (let key in keysPressed) keysPressed[key] = false;
   if (isColliding(guy, meat)) meat.found();
-  else missSfx.play();
+  else if (!wonGame && !lostGame) missSfx.play();
 }
 //example of ipc
 const funk = async () => {
@@ -276,7 +319,7 @@ window.addEventListener("keydown", (e) => {
       lastAct = "right";
       break;
     case " ":
-      if (!gameStarted) gameStart();
+      if (!gameStarted && !selectingChar) gameStart();
       else dig();
       break;
     default:
@@ -308,21 +351,39 @@ window.addEventListener("keyup", (e) => {
 resetBtn.addEventListener("click", () => {
   if (lostGame) {
     lostGame = false;
-    resultsText.style.zIndex = -1;
-    resetBtn.style.zIndex = -1;
+    gameStarted = false;
+    setActiveScreen(screens.start)
     scoreDiv.innerText = "00";
     meat.locations = [];
   }
   if (wonGame) {
     wonGame = false;
-    resultsText.style.zIndex = -1;
-    resetBtn.style.zIndex = -1;
+    gameStarted = false;
+    setActiveScreen(screens.start)
   }
   shuffleTreasurePositions();
-  meat.hide();
   music.currentTime = 0;
-  music.play();
-  animate();
 });
+//Character select listeners
+changeBtn.addEventListener("click", () => {
+  selectingChar = true;
+  gameStarted = false;
+  wonGame = false;
+  lostGame = false;
+  music.currentTime = 0;
+  titleMusic.currentTime = 0;
+  titleMusic.play();
+  setActiveScreen(screens.char)
+});
+for (g = 0; g < charList.length; g++) {
+  charList[g].addEventListener("click", (e) => {
+    selectingChar = false;
+    setActiveScreen(screens.start)
+    const charName = e.target.innerText;
+    guy = createCharacterObj(charName);    
+  });
+}
 
 funk();
+setActiveScreen(screens.char);
+setTimerValue(0, 0);

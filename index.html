@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
-    <link rel="stylesheet" href="./index.css"></link>
-    <title>Meat Seeker</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <link rel="stylesheet" href="./index.css">
+  </link>
+  <title>Meat Seeker</title>
 </head>
+
 <body>
+  <div id="game">
     <div id="scoreboard">
       <h1 id="timer"></h1>
       <h1>SCORE:</h1>
       <h1 id="score"></h1>
     </div>
-    <div id="results" class="screen">
+    <div id="end" class="screen">
+      <div id="results" class="screen">
+      </div>
+      <div id="options">
+        <a id="toCharSelect">CHANGE</a>
+        <a id="reset">GO AGAIN</a>
+      </div>
     </div>
-    <a id="reset">AGAIN</a>
     <canvas id="canvas"></canvas>
     <div id="start" class="screen">PRESS <div id="spacebar">spacebar</div> TO SEEK SOME MEAT</div>
     <div id="therm">
       <div id="merc"></div>
     </div>
-    <div id="info"></div>
+    <div id="charselect" class="screen">
+      PICK YOUR DAWG
+      <ul>
+        <li>guy</li>
+        <li>frog</li>
+      </ul>
+    </div>
+  </div>
+  <div id="info"></div>
 </body>
 <script src="./data/data.js"></script>
 <script src="./data/classes.js"></script>
 <script src="./setup.js"></script>
 <script src="./renderer.js"></script>
+
 </html>
