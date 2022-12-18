@@ -10,12 +10,20 @@ h1{
 ul{
     margin: 0;
     padding:0;
-    font-size: 5rem;
+    font-size: 5.5rem;
+    color: gold;
 }
 li{
     list-style: none;
     color:chartreuse;
     font-size: 4rem;
+    margin:0;
+    padding: 0;
+}
+li img{
+    height: 4rem;
+    object-fit:cover;
+    image-rendering: pixelated;
 }
 body{
     margin:0;

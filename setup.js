@@ -44,7 +44,6 @@ function createSceneObj(src) {
 }
 
 const background = createSceneObj("./img/scene/PracticeProject.png");
-const towerPlatform = createSceneObj("./img/scene/towerPlat.png");
 const foreground = createSceneObj("./img/scene/PracticeForeground.png");
 
 //character set up

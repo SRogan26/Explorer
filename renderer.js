@@ -158,7 +158,6 @@ function drawScene(current, previous) {
   while (frameAcc > frameRate) {
     background.draw();
     guy.draw();
-    towerPlatform.draw();
     foreground.draw();
     meat.draw();
     adjustHeat(checkDist());
@@ -378,9 +377,9 @@ changeBtn.addEventListener("click", () => {
 for (g = 0; g < charList.length; g++) {
   charList[g].addEventListener("click", (e) => {
     selectingChar = false;
-    setActiveScreen(screens.start)
-    const charName = e.target.innerText;
+    const charName = e.target.dataset.name;
     guy = createCharacterObj(charName);    
+    setActiveScreen(screens.start)
   });
 }
 
