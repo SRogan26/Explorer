@@ -71,25 +71,6 @@ function createCharacterObj(character){
   });
 }
 
-// const guyData = {
-//   actions: {
-//     init: "./img/char/guy/guyInit.png",
-//     up: "./img/char/guy/guyUp.png",
-//     down: "./img/char/guy/guyDown.png",
-//     left: "./img/char/guy/guyLeft.png",
-//     right: "./img/char/guy/guyRight.png",
-//     dig: "./img/char/guy/guyDig.png",
-//     found: "./img/char/guy/guyFound.png",
-//   },
-//   frames: {
-//     //total sprites in the sprite sheet
-//     total: 4,
-//     //amount of time in seconds before switching frames in the sprite sheet
-//     wait: 1/5,
-//   },
-// }
-// const guy = createCharacterObj(guyData);
-
 //meat set up
 const meatImg = new Image();
 meatImg.src = "./img/treasure/practiceMeat.png";

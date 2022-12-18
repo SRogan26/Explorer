@@ -27,13 +27,13 @@ const tickRate = (1 / 60) * Math.pow(1 / 2, nTick);
 //frame draw rate
 const frameRate = 1 / 120;
 const tilesPerSec = 10;
-const roundDuration = 60 * 1000;
+const roundDuration = 6 * 1000;
 const distThresholds = {
   close: 50,
   far: 400,
 };
 const winningText = "YOU WON!!! CLICK TO GO AGAIN!!";
-const losingText = "YOU LOST!!! CLICK TO GO AGAIN!!";
+const losingText = "TIMES UP!!! CLICK BELOW TO TRY AGAIN!!";
 
 //Game instance
 let selectingChar = true;
