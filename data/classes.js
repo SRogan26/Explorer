@@ -43,13 +43,18 @@ class Sprite {
     }
   }
 }
-class Scene {
-  constructor({ pos, image }) {
+class Level {
+  constructor({ pos, background,foreground, audio }) {
     this.pos = pos;
-    this.image = image;
+    this.background = background;
+    this.foreground = foreground;
+    this.music = audio;
   }
-  draw() {
-    c.drawImage(this.image, this.pos.x, this.pos.y);
+  drawBg() {
+    c.drawImage(this.background, this.pos.x, this.pos.y);
+  }
+  drawFg() {
+    c.drawImage(this.foreground, this.pos.x, this.pos.y);
   }
 }
 class Boundary {

@@ -90,6 +90,10 @@ body{
 #charselect{
     background-color: blue;
 }
+/* Level Selection */
+#levelselect{
+    background-color: blue;
+}
 /* Start screen before first playthrough */
 #start{
     background-image: url('./img/screens/titleBackground.png');

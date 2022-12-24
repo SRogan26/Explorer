@@ -4,48 +4,79 @@ let waterMap = [];
 let buildingsMap = [];
 let searchableTilesGrid = [];
 
-for (i = 0; i < water.length; i += columns) {
-  waterMap.push(water.slice(i, i + columns));
-  buildingsMap.push(buildings.slice(i, i + columns));
-}
-
-for (i = 0; i < collisions.length; i += columns) {
-  collisionsMap.push(collisions.slice(i, i + columns));
-}
-
 let boundaries = [];
 
-for (y = 0; y < collisionsMap.length; y++) {
-  for (x = 0; x < collisionsMap[y].length; x++) {
-    if (collisionsMap[y][x] !== 0)
-      boundaries.push(new Boundary({ x: x * tileSize, y: y * tileSize }));
-    else if (waterMap[y][x] + buildingsMap[y][x] === 0)
-      searchableTilesGrid.push([x, y]);
-  }
-}
 //audio?
 const titleMusic = new Audio('audio/music/GoodTime.ogg')
 titleMusic.volume = .7;
-const music = new Audio('audio/music/StrongandStrike.mp3')
 const findSfx = new Audio('audio/fx/Gold1.wav')
 const missSfx = new Audio('./audio/fx/Menu4.wav')
 const bumpSfx = new Audio('./audio/fx/Hit.wav')
 bumpSfx.volume = .45;
 const gameOver = new Audio('./audio/music/GameOver2.wav')
 
+//meat set up
+const meatImg = new Image();
+meatImg.src = "./img/treasure/practiceMeat.png";
+const meat = new Treasure(meatImg, findSfx);
+//Grabs the coordinates of the treasure randomly
+function chooseRandomPosition(copyOfSearchables) {
+  const randIndex = Math.floor(Math.random() * copyOfSearchables.length);
+  const option = copyOfSearchables.splice(randIndex, 1);
+  return option[0];
+}
+function shuffleTreasurePositions() {
+  const copyOfSearchables = [...searchableTilesGrid];
+  while (copyOfSearchables.length > 0) {
+    const meatPos = chooseRandomPosition(copyOfSearchables);
+    meat.locations.push(meatPos);
+  }
+  console.log(
+    "All locations set: ",
+    meat.locations.length === searchableTilesGrid.length
+  );
+}
 //scene set up
-function createSceneObj(src) {
-  const imgObj = new Image();
-  imgObj.src = src;
-  return new Scene({
+function createLevelObj(levelName) {
+  //create scene
+  const bgObj = new Image();
+  bgObj.src = `./img/scene/${levelName}/${levelName}Background.png`;
+  const fgObj = new Image();
+  fgObj.src = `./img/scene/${levelName}/${levelName}Foreground.png`;
+  const audioObj = new Audio(`audio/music/${levelName}/${levelName}.mp3`)
+  //set level data
+  collisionsMap = [];
+  waterMap = [];
+  buildingsMap = [];
+  searchableTilesGrid = [];
+
+  for (i = 0; i < mapData[levelName].water.length; i += columns) {
+    waterMap.push(mapData[levelName].water.slice(i, i + columns));
+    buildingsMap.push(mapData[levelName].buildings.slice(i, i + columns));
+  }
+  
+  for (i = 0; i < mapData[levelName].collisions.length; i += columns) {
+    collisionsMap.push(mapData[levelName].collisions.slice(i, i + columns));
+  }
+  
+  boundaries = [];
+  
+  for (y = 0; y < collisionsMap.length; y++) {
+    for (x = 0; x < collisionsMap[y].length; x++) {
+      if (collisionsMap[y][x] !== 0)
+      boundaries.push(new Boundary({ x: x * tileSize, y: y * tileSize }));
+      else if (waterMap[y][x] + buildingsMap[y][x] === 0)
+      searchableTilesGrid.push([x, y]);
+    }
+  }
+  shuffleTreasurePositions();
+  return new Level({
     pos: { x: 0, y: 0 },
-    image: imgObj,
+    background: bgObj,
+    foreground: fgObj,
+    audio: audioObj
   });
 }
-
-const background = createSceneObj("./img/scene/PracticeProject.png");
-const foreground = createSceneObj("./img/scene/PracticeForeground.png");
-
 //character set up
 function createCharacterObj(character){
   const charImg = new Image();
@@ -70,28 +101,3 @@ function createCharacterObj(character){
     },
   });
 }
-
-//meat set up
-const meatImg = new Image();
-meatImg.src = "./img/treasure/practiceMeat.png";
-
-
-const meat = new Treasure(meatImg, findSfx);
-//Grabs the coordinates of the treasure randomly
-function chooseRandomPosition(copyOfSearchables) {
-  const randIndex = Math.floor(Math.random() * copyOfSearchables.length);
-  const option = copyOfSearchables.splice(randIndex, 1);
-  return option[0];
-}
-function shuffleTreasurePositions() {
-  const copyOfSearchables = [...searchableTilesGrid];
-  while (copyOfSearchables.length > 0) {
-    const meatPos = chooseRandomPosition(copyOfSearchables);
-    meat.locations.push(meatPos);
-  }
-  console.log(
-    "All locations set: ",
-    meat.locations.length === searchableTilesGrid.length
-  );
-}
-shuffleTreasurePositions();

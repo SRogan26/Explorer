@@ -7,14 +7,16 @@ let lastTime;
 let tickAccumulator = 0;
 let frameAcc = 0;
 let startTime;
-//Reference for character
+//Reference for character and level
 let guy;
+let stage;
 const screens = {
-  char:0,
-  start: 1,
-  game: 2,
-  end: 3,
-}
+  char: 2,
+  start: 3,
+  game: 4,
+  end: 5,
+  level: 6,
+};
 
 canvas.width = columns * tileSize;
 canvas.height = rows * tileSize;
@@ -28,10 +30,48 @@ const charSelScreen = document.getElementById("charselect");
 const charList = charSelScreen.getElementsByTagName("ul")[0].children;
 const startScreen = document.getElementById("start");
 const endScreen = document.getElementById("end");
+const levelSelScreen = document.getElementById("levelselect");
+const levelList = levelSelScreen.getElementsByTagName("ul")[0].children;
 
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
 const changeBtn = document.getElementById("toCharSelect");
+
+//creates list items for a character choice and  level choice objects
+function createCharChoice(character) {
+  const charChoice = document.createElement("li");
+  const charId = Object.keys(character)[0];
+  const charName = Object.values(character)[0];
+  charChoice.dataset.name = charId;
+  charChoice.innerText = charName;
+  const charImg = new Image();
+  charImg.dataset.name = charId;
+  charImg.src = `./img/char/${charId}/${charId}Face.png`;
+  charChoice.prepend(charImg);
+  return charChoice;
+}
+function createLevelChoice(level){
+  const levelChoice = document.createElement("li");
+  const levelId = Object.keys(level)[0];
+  const levelName = Object.values(level)[0];
+  levelChoice.dataset.name = levelId;
+  levelChoice.innerText = levelName;
+  const levelImg = new Image();
+  levelImg.dataset.name = levelId;
+  levelImg.src = `./img/scene/${levelId}/${levelId}Background.png`;
+  levelChoice.prepend(levelImg);
+  return levelChoice;
+}
+//populate character select and level select lists
+for (p = 0; p < characters.length; p++) {
+  const charItem = createCharChoice(characters[p]);
+  charSelScreen.getElementsByTagName("ul")[0].appendChild(charItem);
+}
+for (l = 0; l < levels.length; l++) {
+  const levelItem = createLevelChoice(levels[l]);
+  levelSelScreen.getElementsByTagName("ul")[0].appendChild(levelItem);
+}
+
 
 //checks distance between meat and player
 function checkDist() {
@@ -46,13 +86,13 @@ function adjustHeat(distSQ) {
   const closeSQ = distThresholds.close * distThresholds.close;
   const farSQ = distThresholds.far * distThresholds.far;
   if (distSQ <= closeSQ) {
-    music.volume = musicVolume.max;
+    stage.music.volume = musicVolume.max;
     heatGauge.style.backgroundColor = `rgb(255, 0, 0)`;
     heatGauge.style.height = "100%";
   } else if (distSQ > closeSQ && distSQ < farSQ) {
     const distRange = farSQ - closeSQ;
     const meterHeight = 100 * (Math.abs(distSQ - distRange) / distRange);
-    music.volume = 0.24 + (meterHeight * volRange) / 100;
+    stage.music.volume = 0.24 + (meterHeight * volRange) / 100;
     const colorMod = Math.floor(
       255 * (Math.abs(distSQ - distRange) / distRange)
     );
@@ -64,7 +104,7 @@ function adjustHeat(distSQ) {
     heatGauge.style.backgroundColor = `rgb(${redVal}, ${grnVal}, ${blueVal})`;
     heatGauge.style.height = `${meterHeight}%`;
   } else if (distSQ >= farSQ) {
-    music.volume = musicVolume.min;
+    stage.music.volume = musicVolume.min;
     heatGauge.style.backgroundColor = `rgb(0, 0, 255)`;
     heatGauge.style.height = "15%";
   }
@@ -156,9 +196,9 @@ function updatePosition() {
 function drawScene(current, previous) {
   frameAcc += (current - previous) / 1000;
   while (frameAcc > frameRate) {
-    background.draw();
+    stage.drawBg();
     guy.draw();
-    foreground.draw();
+    stage.drawFg();
     meat.draw();
     adjustHeat(checkDist());
     frameAcc -= frameRate;
@@ -181,8 +221,8 @@ function setTimerValue(current, start) {
   ).innerText = `${clockMins}:${clockSecs}.${clockMs}`;
 }
 function setMusicIntensity() {
-  if (timeLeftms <= 10000) music.playbackRate = 1.2;
-  else music.playbackRate = 1;
+  if (timeLeftms <= 10000) stage.music.playbackRate = 1.2;
+  else stage.music.playbackRate = 1;
 }
 //calculation rate setter
 function logicTick(current, previous) {
@@ -201,21 +241,32 @@ function setActiveScreen(screen) {
       startScreen.style.zIndex = -1;
       canvas.style.zIndex = -1;
       endScreen.style.zIndex = -1;
+      levelSelScreen.style.zIndex = -1;
       break;
     case screens.start:
       startScreen.style.zIndex = 3;
       canvas.style.zIndex = -1;
       charSelScreen.style.zIndex = -1;
       endScreen.style.zIndex = -1;
+      levelSelScreen.style.zIndex = -1;
       break;
     case screens.game:
-      canvas.style.zIndex = 3; 
+      canvas.style.zIndex = 3;
       startScreen.style.zIndex = -1;
       charSelScreen.style.zIndex = -1;
       endScreen.style.zIndex = -1;
+      levelSelScreen.style.zIndex = -1;
       break;
     case screens.end:
       endScreen.style.zIndex = 3;
+      startScreen.style.zIndex = -1;
+      canvas.style.zIndex = -1;
+      charSelScreen.style.zIndex = -1;
+      levelSelScreen.style.zIndex = -1;
+      break;
+    case screens.level:
+      levelSelScreen.style.zIndex = 3;
+      endScreen.style.zIndex = -1;
       startScreen.style.zIndex = -1;
       canvas.style.zIndex = -1;
       charSelScreen.style.zIndex = -1;
@@ -225,7 +276,7 @@ function setActiveScreen(screen) {
 //Results Screens Triggers
 function showLoseScreen() {
   cancelAnimationFrame(animID);
-  music.pause();
+  stage.music.pause();
   gameOver.play();
   lostGame = true;
   startTime = null;
@@ -240,10 +291,9 @@ function showWinScreen() {
 }
 //game loop
 function animate(timestamp) {
-  if (music.ended) music.play();
+  if (stage.music.ended) stage.music.play();
   if (!lastTime) lastTime = timestamp;
   if (!startTime) startTime = timestamp;
-  // console.log(music.volume)
   //in game timer value
   setTimerValue(performance.now(), startTime);
   setMusicIntensity();
@@ -265,7 +315,7 @@ function animate(timestamp) {
 function gameStart() {
   gameStarted = true;
   titleMusic.pause();
-  music.play();
+  stage.music.play();
   setActiveScreen(screens.game);
   meat.hide();
   animate();
@@ -318,7 +368,7 @@ window.addEventListener("keydown", (e) => {
       lastAct = "right";
       break;
     case " ":
-      if (!gameStarted && !selectingChar) gameStart();
+      if (!gameStarted && !selectingChar && !selectingLevel) gameStart();
       else dig();
       break;
     default:
@@ -351,38 +401,49 @@ resetBtn.addEventListener("click", () => {
   if (lostGame) {
     lostGame = false;
     gameStarted = false;
-    setActiveScreen(screens.start)
+    setActiveScreen(screens.start);
     scoreDiv.innerText = "00";
     meat.locations = [];
   }
   if (wonGame) {
     wonGame = false;
     gameStarted = false;
-    setActiveScreen(screens.start)
+    setActiveScreen(screens.start);
   }
   shuffleTreasurePositions();
-  music.currentTime = 0;
+  stage.music.currentTime = 0;
 });
 //Character select listeners
 changeBtn.addEventListener("click", () => {
-  selectingChar = true;
+  selectingLevel = true;
   gameStarted = false;
   wonGame = false;
   lostGame = false;
-  music.currentTime = 0;
+  scoreDiv.innerText = "00";
+  stage.music.currentTime = 0;
   titleMusic.currentTime = 0;
   titleMusic.play();
-  setActiveScreen(screens.char)
+  setActiveScreen(screens.level);
 });
 for (g = 0; g < charList.length; g++) {
   charList[g].addEventListener("click", (e) => {
     selectingChar = false;
     const charName = e.target.dataset.name;
-    guy = createCharacterObj(charName);    
-    setActiveScreen(screens.start)
+    guy = createCharacterObj(charName);
+    setActiveScreen(screens.start);
+  });
+}
+//level select listeners
+for (g = 0; g < levelList.length; g++) {
+  levelList[g].addEventListener("click", (e) => {
+    selectingLevel = false;
+    selectingChar = true;
+    const levelName = e.target.dataset.name;
+    stage = createLevelObj(levelName);
+    setActiveScreen(screens.char);
   });
 }
 
 funk();
-setActiveScreen(screens.char);
+setActiveScreen(screens.level);
 setTimerValue(0, 0);
