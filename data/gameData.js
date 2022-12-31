@@ -40,6 +40,8 @@ const characters = [
   { frog: "FROG NINJA" },
   { spy: "AGENT C." },
   { dog: "INU NINGEN" },
+  { lion: "LION SAGE" },
+  { skeleton: "JIMMY" },
 ];
 
 const levels = [

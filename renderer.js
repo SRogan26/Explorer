@@ -27,11 +27,12 @@ scoreDiv.innerText = "00";
 const heatGauge = document.getElementById("merc");
 
 const charSelScreen = document.getElementById("charselect");
-const charList = charSelScreen.getElementsByTagName("ul")[0].children;
+const charList = charSelScreen.getElementsByTagName("div")[0].children;
+const charNameDisplay = document.getElementById("name-display");
 const startScreen = document.getElementById("start");
 const endScreen = document.getElementById("end");
 const levelSelScreen = document.getElementById("levelselect");
-const levelList = levelSelScreen.getElementsByTagName("ul")[0].children;
+const levelList = levelSelScreen.getElementsByTagName("div")[0].children;
 
 const resultsText = document.getElementById("results");
 const resetBtn = document.getElementById("reset");
@@ -39,16 +40,21 @@ const changeBtn = document.getElementById("toCharSelect");
 
 //creates list items for a character choice and  level choice objects
 function createCharChoice(character) {
-  const charChoice = document.createElement("li");
   const charId = Object.keys(character)[0];
   const charName = Object.values(character)[0];
-  charChoice.dataset.name = charId;
-  charChoice.innerText = charName;
   const charImg = new Image();
   charImg.dataset.name = charId;
+  charImg.dataset.label = charName;
   charImg.src = `./img/char/${charId}/${charId}Face.png`;
-  charChoice.prepend(charImg);
-  return charChoice;
+  charImg.addEventListener('mouseover', (e)=>{
+    charNameDisplay.innerText = charImg.dataset.label;
+    charImg.style.opacity = 1;
+  })
+  charImg.addEventListener('mouseout', (e)=>{
+    charNameDisplay.innerText = '';
+    charImg.style.opacity = .7;
+  })
+  return charImg;
 }
 function createLevelChoice(level){
   const levelChoice = document.createElement("li");
@@ -65,11 +71,11 @@ function createLevelChoice(level){
 //populate character select and level select lists
 for (p = 0; p < characters.length; p++) {
   const charItem = createCharChoice(characters[p]);
-  charSelScreen.getElementsByTagName("ul")[0].appendChild(charItem);
+  charSelScreen.getElementsByTagName("div")[0].appendChild(charItem);
 }
 for (l = 0; l < levels.length; l++) {
   const levelItem = createLevelChoice(levels[l]);
-  levelSelScreen.getElementsByTagName("ul")[0].appendChild(levelItem);
+  levelSelScreen.getElementsByTagName("div")[0].appendChild(levelItem);
 }
 
 
