@@ -10,6 +10,7 @@ html {
 h1 {
     margin: 0;
 }
+
 li {
     list-style: none;
     color: whitesmoke;
@@ -49,8 +50,11 @@ body {
     grid-area: score;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+    border: 1px solid white;
+    border-style: inset;
+    background-color: rgba(0, 0, 0, 0.597);
     font-size: 1rem;
     align-items: center;
     justify-content: space-between;
@@ -62,6 +66,26 @@ body {
     height: 6rem;
     width: 100%;
     text-align: center;
+}
+
+#meat-display {
+    grid-area: meats;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-end;
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+    border: 1px solid white;
+    border-style: inset;
+    background-color: rgba(0, 0, 0, 0.597);
+}
+
+#meat-display img {
+    width: 25%;
+    max-height: 1.75rem;
+    object-fit: fill;
+    image-rendering: crisp-edges;
 }
 
 #info {
@@ -186,7 +210,6 @@ body {
     border: 1px solid white;
     border-style: inset;
     background-color: rgba(169, 169, 169, 0.302);
-    width: var(--x-off);
     display: flex;
     flex-direction: column-reverse;
 }

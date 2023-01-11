@@ -4,8 +4,6 @@ let waterMap = [];
 let buildingsMap = [];
 let searchableTilesGrid = [];
 
-let boundaries = [];
-
 //audio?
 const titleMusic = new Audio('audio/music/GoodTime.ogg')
 titleMusic.volume = .7;
@@ -59,13 +57,9 @@ function createLevelObj(levelName) {
     collisionsMap.push(mapData[levelName].collisions.slice(i, i + columns));
   }
   
-  boundaries = [];
-  
   for (y = 0; y < collisionsMap.length; y++) {
     for (x = 0; x < collisionsMap[y].length; x++) {
-      if (collisionsMap[y][x] !== 0)
-      boundaries.push(new Boundary({ x: x * tileSize, y: y * tileSize }));
-      else if (waterMap[y][x] + buildingsMap[y][x] === 0)
+      if (waterMap[y][x] + buildingsMap[y][x] + collisionsMap[y][x] === 0)
       searchableTilesGrid.push([x, y]);
     }
   }

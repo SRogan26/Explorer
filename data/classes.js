@@ -57,16 +57,6 @@ class Level {
     c.drawImage(this.foreground, this.pos.x, this.pos.y);
   }
 }
-class Boundary {
-  constructor(pos) {
-    this.pos = pos;
-  }
-  draw() {
-    c.fillStyle = "rgba(255, 0, 0, .4)";
-    c.fillRect(this.pos.x, this.pos.y, tileSize, tileSize);
-  }
-}
-
 class Treasure {
   constructor(image, findSfx) {
     this.pos = { x: 0, y: 0 };
@@ -87,6 +77,11 @@ class Treasure {
   }
   found() {
     this.findSfx.play();
+    //display meat image in tray
+    const meatDisplay = document.getElementById("meat-display")
+    const meatImgCopy = new Image()
+    meatImgCopy.src = this.image.src
+    meatDisplay.appendChild(meatImgCopy)
     //increment score
     const scoreDiv = document.getElementById("score");
     const currentScore = parseInt(scoreDiv.innerText);

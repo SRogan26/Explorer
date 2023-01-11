@@ -23,6 +23,7 @@ canvas.height = rows * tileSize;
 
 const scoreDiv = document.getElementById("score");
 scoreDiv.innerText = "00";
+const meatDisplay = document.getElementById("meat-display")
 
 const heatGauge = document.getElementById("merc");
 
@@ -46,17 +47,17 @@ function createCharChoice(character) {
   charImg.dataset.name = charId;
   charImg.dataset.label = charName;
   charImg.src = `./img/char/${charId}/${charId}Face.png`;
-  charImg.addEventListener('mouseover', (e)=>{
+  charImg.addEventListener("mouseover", (e) => {
     charNameDisplay.innerText = charImg.dataset.label;
     charImg.style.opacity = 1;
-  })
-  charImg.addEventListener('mouseout', (e)=>{
-    charNameDisplay.innerText = '';
-    charImg.style.opacity = .7;
-  })
+  });
+  charImg.addEventListener("mouseout", (e) => {
+    charNameDisplay.innerText = "";
+    charImg.style.opacity = 0.7;
+  });
   return charImg;
 }
-function createLevelChoice(level){
+function createLevelChoice(level) {
   const levelChoice = document.createElement("li");
   const levelId = Object.keys(level)[0];
   const levelName = Object.values(level)[0];
@@ -77,7 +78,6 @@ for (l = 0; l < levels.length; l++) {
   const levelItem = createLevelChoice(levels[l]);
   levelSelScreen.getElementsByTagName("div")[0].appendChild(levelItem);
 }
-
 
 //checks distance between meat and player
 function checkDist() {
@@ -124,8 +124,36 @@ function isColliding(rect1, rect2) {
     rect1.pos.y < rect2.pos.y + tileSize
   );
 }
+//function to get information in 4x4 grid around character
+function getProximityInfo() {
+  const proximityInfo = new Array();
+  const approxTileX = Math.floor(guy.pos.x / tileSize);
+  const approxTileY = Math.floor(guy.pos.y / tileSize);
+  for (let yOffset = -1; yOffset < 2; yOffset++) {
+    const gridY = approxTileY + yOffset;
+    if (gridY >= 0 && gridY <= rows) {
+      for (let xOffset = -1; xOffset < 2; xOffset++) {
+        const gridX = approxTileX + xOffset;
+        if (
+          gridX >= 0 &&
+          gridX <= columns &&
+          collisionsMap[gridY][gridX] != 0
+        ) {
+          proximityInfo.push({
+            pos: { x: gridX * tileSize, y: gridY * tileSize },
+          });
+        }
+      }
+    }
+  }
+  return proximityInfo;
+}
 //Handler for character movement
 function updatePosition() {
+  const boundaries = getProximityInfo();
+  //adds dummy item if in the clear next to the edge of the screen
+  if(boundaries.length === 0) boundaries.push({pos:{x:0,y:0}})
+  //directional predictions based on key pressed
   if (keysPressed.up) {
     let moveUp = true;
     for (let i = 0; i < boundaries.length; i++) {
@@ -134,7 +162,8 @@ function updatePosition() {
         isColliding(
           { ...guy, pos: { x: guy.pos.x, y: guy.pos.y - guy.vel } },
           bound
-        )
+        ) ||
+        guy.pos.y - guy.vel <= 0
       ) {
         bumpSfx.play();
         moveUp = false;
@@ -151,7 +180,8 @@ function updatePosition() {
         isColliding(
           { ...guy, pos: { x: guy.pos.x, y: guy.pos.y + guy.vel } },
           bound
-        )
+        ) ||
+        guy.pos.y + guy.vel >= canvas.height
       ) {
         bumpSfx.play();
         moveDown = false;
@@ -165,7 +195,7 @@ function updatePosition() {
     for (let i = 0; i < boundaries.length; i++) {
       const bound = boundaries[i];
       if (
-        guy.pos.x - guy.vel < 0 ||
+        guy.pos.x - guy.vel <= 0 ||
         isColliding(
           {
             ...guy,
@@ -189,7 +219,8 @@ function updatePosition() {
         isColliding(
           { ...guy, pos: { x: guy.pos.x + guy.vel, y: guy.pos.y } },
           bound
-        )
+        ) ||
+        guy.pos.x + guy.vel >= canvas.width
       ) {
         bumpSfx.play();
         moveRight = false;
@@ -234,7 +265,6 @@ function setMusicIntensity() {
 function logicTick(current, previous) {
   tickAccumulator += (current - previous) / 1000;
   while (tickAccumulator > tickRate) {
-    boundaries.forEach((boundary) => isColliding(guy, boundary));
     updatePosition();
     tickAccumulator -= tickRate;
   }
@@ -408,6 +438,7 @@ resetBtn.addEventListener("click", () => {
     lostGame = false;
     gameStarted = false;
     setActiveScreen(screens.start);
+    meatDisplay.innerHTML = '';
     scoreDiv.innerText = "00";
     meat.locations = [];
   }
@@ -425,6 +456,7 @@ changeBtn.addEventListener("click", () => {
   gameStarted = false;
   wonGame = false;
   lostGame = false;
+  meatDisplay.innerHTML = '';
   scoreDiv.innerText = "00";
   stage.music.currentTime = 0;
   titleMusic.currentTime = 0;
