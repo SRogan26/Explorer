@@ -5,6 +5,7 @@ html {
     --x-off: 140px;
     --on-hover: rgba(248, 248, 255, 0.456);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    width: fit-content;
 }
 
 h1 {
@@ -33,11 +34,10 @@ body {
     margin: 0;
     background-color: darkslategrey;
     color: whitesmoke;
-    position: relative;
+    width: fit-content;
 }
 
 #game {
-    position: absolute;
     display: grid;
     grid-template:
         'score screen temp' 12rem

@@ -137,7 +137,7 @@ function getProximityInfo() {
         if (
           gridX >= 0 &&
           gridX <= columns &&
-          collisionsMap[gridY][gridX] != 0
+          collisionsMap[gridY][gridX] !== 0
         ) {
           proximityInfo.push({
             pos: { x: gridX * tileSize, y: gridY * tileSize },
@@ -152,7 +152,7 @@ function getProximityInfo() {
 function updatePosition() {
   const boundaries = getProximityInfo();
   //adds dummy item if in the clear next to the edge of the screen
-  if(boundaries.length === 0) boundaries.push({pos:{x:0,y:0}})
+  if(boundaries.length === 0) boundaries.push({pos:{x:-1,y:-1}})
   //directional predictions based on key pressed
   if (keysPressed.up) {
     let moveUp = true;
